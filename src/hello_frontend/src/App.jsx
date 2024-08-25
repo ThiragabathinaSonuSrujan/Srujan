@@ -1,31 +1,35 @@
-import { useState } from 'react';
-import { hello_backend } from 'declarations/hello_backend';
+import React, { useState } from 'react';
+import TaskForm from './TaskForm.jsx';
+import TaskList from './TaskList.jsx';
 
-function App() {
-  const [greeting, setGreeting] = useState('');
+const App = () => {
+  const [tasks, setTasks] = useState([]);
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    hello_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
+  const handleAddTask = (task) => {
+    setTasks([...tasks, { id: Date.now(), text: task, completed: false }]);
+  };
+
+  const handleToggleTask = (id) => {
+    setTasks(tasks.map(task =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+  };
+
+  const handleDeleteTask = (id) => {
+    setTasks(tasks.filter(task => task.id !== id));
+  };
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <div>
+      <h1>To-Do List</h1>
+      <TaskForm onAddTask={handleAddTask} />
+      <TaskList
+        tasks={tasks}
+        onToggleTask={handleToggleTask}
+        onDeleteTask={handleDeleteTask}
+      />
+    </div>
   );
-}
+};
 
 export default App;
