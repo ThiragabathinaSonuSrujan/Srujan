@@ -1,35 +1,68 @@
 import React, { useState } from 'react';
-import TaskForm from './TaskForm.jsx';
-import TaskList from './TaskList.jsx';
 
-const App = () => {
-  const [tasks, setTasks] = useState([]);
+const HabitTracker = () => {
+  const [habits, setHabits] = useState([]);
+  const [newHabit, setNewHabit] = useState('');
 
-  const handleAddTask = (task) => {
-    setTasks([...tasks, { id: Date.now(), text: task, completed: false }]);
+  const addHabit = () => {
+    if (newHabit.trim() !== '') {
+      const habit = {
+        id: Date.now(),
+        name: newHabit,
+        completed: false,
+      };
+      setHabits([...habits, habit]);
+      setNewHabit('');
+    }
   };
 
-  const handleToggleTask = (id) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+  const toggleHabit = (id) => {
+    setHabits(
+      habits.map(habit =>
+        habit.id === id ? { ...habit, completed: !habit.completed } : habit
+      )
+    );
   };
 
-  const handleDeleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+  const deleteHabit = (id) => {
+    setHabits(habits.filter(habit => habit.id !== id));
   };
 
   return (
-    <div>
-      <h1>To-Do List</h1>
-      <TaskForm onAddTask={handleAddTask} />
-      <TaskList
-        tasks={tasks}
-        onToggleTask={handleToggleTask}
-        onDeleteTask={handleDeleteTask}
+    <div style={{ maxWidth: '400px', margin: '0 auto', textAlign: 'center' }}>
+      <h1>Habit Tracker</h1>
+      <input
+        type="text"
+        value={newHabit}
+        onChange={(e) => setNewHabit(e.target.value)}
+        placeholder="Enter new habit"
+        style={{ padding: '10px', width: '80%', marginBottom: '10px' }}
       />
+      <button onClick={addHabit} style={{ padding: '10px 20px' }}>Add</button>
+      <ul style={{ listStyle: 'none', padding: 0, marginTop: '20px' }}>
+        {habits.map(habit => (
+          <li
+            key={habit.id}
+            style={{
+              textDecoration: habit.completed ? 'line-through' : 'none',
+              marginBottom: '10px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            {habit.name}
+            <div>
+              <button onClick={() => toggleHabit(habit.id)} style={{ marginRight: '10px' }}>
+                {habit.completed ? 'Undo' : 'Done'}
+              </button>
+              <button onClick={() => deleteHabit(habit.id)}>Delete</button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default App;
+export default HabitTracker;
